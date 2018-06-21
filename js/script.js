@@ -3,15 +3,9 @@ $(document).ready(function($) {
     var windowW = windowEl.width();
     var beforeWidth = $(this).width();
 
-    // обновление страницы при масштабировании
-    $(window).resize(function() {
-        var afterWidth = $(this).width();
-        if (afterWidth != beforeWidth) {
-            location.reload()
-        }
-    })
 
-    $('.reviews-slider').slick({
+
+    $('.reviews-slider').not('.slick-initialized').slick({
         slidesToShow: 1,
         slidesToScroll: 1,
         arrows: true,
@@ -29,8 +23,8 @@ $(document).ready(function($) {
         }, ]
     });
 
-    if (windowW < 1050) {
-        $('.works-items').slick({
+    function sliderOne() {
+        $('.works-items').not('.slick-initialized').slick({
             slidesToShow: 2,
             slidesToScroll: 1,
             dots: true,
@@ -57,14 +51,66 @@ $(document).ready(function($) {
         });
     };
 
-    if (windowW < 991) {
-        $('.about-items').slick({
+    function sliderTwo() {
+        $('.about-items').not('.slick-initialized').slick({
             slidesToShow: 1,
             slidesToScroll: 1,
             arrows: false,
             dots: true,
         });
-    }
+    };
+
+    if (windowW < 1050) {
+        sliderOne();
+    };
+
+
+    if (windowW < 991) {
+        sliderTwo();
+    };
+
+    // resize slider
+    var counter = 0;
+    var counterTwo = 0;
+    var i = 0;
+    var j = 0;
+
+    $(window).on('resize orientationchange', function(event) {
+        var windowEl = $('body');
+        var windowW = windowEl.width();
+
+        if (windowW < 1050) {
+            counter++
+            if (counter == 1) {
+                sliderOne();
+                i = 1;
+                counter = 0;
+            }
+        } else if (windowW >= 1050 && i == 1) {
+            $('.works-item').removeAttr('id aria-describedby tabindex role');
+            setTimeout(function() {
+                $('.works-items').slick('unslick');
+            }, 500);
+            counter = 0;
+            i = 0;
+        };
+
+        if (windowW < 991) {
+            counterTwo++
+            if (counterTwo == 1) {
+                sliderTwo();
+                j = 1;
+                counterTwo = 0;
+            }
+        } else if (windowW >= 991 && j == 1) {
+            $('.about-item').removeAttr('id aria-describedby tabindex role');
+            setTimeout(function() {
+                $('.about-items').slick('unslick');
+            }, 500);
+            counterTwo = 0;
+            j = 0;
+        };
+    });
 
     //smooth anchor
 
